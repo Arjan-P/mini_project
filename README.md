@@ -1,1 +1,0 @@
-# JAVA, DBMS mini project
