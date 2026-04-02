@@ -1,0 +1,20 @@
+DELIMITER //
+
+CREATE TRIGGER prevent_enrollment_if_full
+BEFORE INSERT ON ENROLLMENT
+FOR EACH ROW
+BEGIN
+  IF (SELECT COUNT(*) FROM ENROLLMENT WHERE OfferingID = NEW.OfferingID) >=
+     (SELECT MaxSeats FROM COURSE_OFFERING WHERE OfferingID = NEW.OfferingID) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Course full';
+  END IF;
+END //
+
+CREATE TRIGGER compute_pass_fail_on_insert
+BEFORE INSERT ON ATTEMPTS
+FOR EACH ROW
+BEGIN
+  SET NEW.PassFail = IF(NEW.MarksObtained >= 40, 'Pass', 'Fail');
+END //
+
+DELIMITER ;
