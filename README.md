@@ -119,13 +119,6 @@ first cd into java-integration/src
 then do Ctrl + Shift + P → **Java: Configure Classpath**
 go into libraries, add your jar file there
 
-
-After the jar file is added for the project,
-cd out into java-integration folder and run this:
-
-mkdir lib
-cp /path/to/jar-file lib/
-
 ---
 
 ### 2. Configure Credentials
@@ -146,16 +139,8 @@ private static final String PASS = "your_password";
 
 ### 3. Run Application
 
-On linux:
-
-cd java-integration
-chmod +x run.sh
-./run.sh
-
-On windows go into git bash:
-
-cd java-integration
-bash run.sh
+cd into java-integration/src/
+then run Main.java
 
 ---
 
