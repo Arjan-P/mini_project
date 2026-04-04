@@ -20,3 +20,6 @@ Thumbs.db
 
 # Logs (optional but useful)
 *.log
+
+#jar file
+java-integration/lib/

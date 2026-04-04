@@ -112,31 +112,19 @@ SELECT count_enrollments(1);
 
 ### 1. JDBC Driver
 
-Ensure:
+Download your java jar file (or have it ready) for sql connection, and add it to this project through your ide
 
-```
-java-integration/lib/mysql-connector-j.jar
-```
+if you're on vs code:
+first cd into java-integration/src
+then do Ctrl + Shift + P → **Java: Configure Classpath**
+go into libraries, add your jar file there
 
-#### VS Code Setup
 
-Create:
+After the jar file is added for the project,
+cd out into java-integration folder and run this:
 
-```
-.vscode/settings.json
-```
-
-```json
-{
-  "java.project.referencedLibraries": [
-    "java-integration/lib/mysql-connector-j.jar"
-  ]
-}
-```
-
-OR use:
-
-* Ctrl + Shift + P → **Java: Configure Classpath**
+mkdir lib
+cp /path/to/jar-file lib/
 
 ---
 
