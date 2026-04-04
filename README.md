@@ -146,15 +146,17 @@ private static final String PASS = "your_password";
 
 ### 3. Run Application
 
-```bash
+On linux:
+
 cd java-integration
 chmod +x run.sh
 ./run.sh
-```
-On windows:
+
+On windows go into git bash:
 
 cd java-integration
 bash run.sh
+
 ---
 
 ## Java Project Structure
