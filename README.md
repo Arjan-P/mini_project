@@ -1,126 +1,320 @@
 # DBMS Academic Management System
 
-MySQL backend with two separate databases: one for normalization examples and one for production BCNF schema. Includes optimized procedures, functions, and triggers.
+MySQL-based Academic Management System with:
+
+* Normalization demo (UNF → 3NF)
+* Production BCNF database (24 tables)
+* Java (JDBC) + Swing GUI for interaction
 
 ---
 
-## Setup: Two Separate Databases
+## Project Overview
 
-### Database 1: Normalization Demo (`normalization_demo/`)
+This project demonstrates:
 
-Run the SQL files in order: unf.sql → 1nf.sql → 2nf.sql → 3nf.sql. Each file creates its own test database showing progressive normalization.
+* Step-by-step database normalization
+* A fully normalized academic management system (BCNF)
+* Stored procedures, functions, and triggers
+* Java integration using JDBC
+* GUI-based interaction with database operations
 
-**Normalization Progression:**
-- **unf.sql** - Unnormalized: Repeating groups (comma-separated StudentName, CourseName, Marks)
-- **1nf.sql** - First Normal Form: Atomic values only; each row is one enrollment
-- **2nf.sql** - Second Normal Form: Splits into 3 tables (Student, Course, Enrollment) to eliminate partial dependencies
-- **3nf.sql** - Third Normal Form: Separate Faculty table to eliminate transitive dependencies (faculty not stored in course)
+---
 
-### Database 2: Production BCNF (`final_db/`)
+## Project Structure
 
-Run the SQL files in this order to create the production database:
-1. **schema.sql** - Creates 24 tables with the full schema
-2. **inserts.sql** - Loads sample data (50+ records)
-3. **procedures.sql** - Creates the stored procedures
-4. **functions.sql** - Creates the stored functions
-5. **triggers.sql** - Creates the database triggers
-6. **queries.sql** (optional) - Sample queries to explore the data
+```
+mini_project/
+├── normalization_demo/
+├── final_db/
+├── java-integration/
+└── README.md
+```
+
+---
+
+## Database Setup
+
+### 1. Create Database
+
+```sql
+CREATE DATABASE academic_management;
+USE academic_management;
+```
+
+---
+
+### 2. Normalization Demo (`normalization_demo/`)
+
+Run SQL files in order:
+
+* `unf.sql` → Repeating groups (unnormalized)
+* `1nf.sql` → Atomic values
+* `2nf.sql` → Removes partial dependencies
+* `3nf.sql` → Removes transitive dependencies
+
+This demonstrates the full normalization process.
+
+---
+
+### 3. Production Database (`final_db/`)
+
+Run SQL files in order:
+
+1. `schema.sql` → 24-table schema
+2. `procedures.sql` → Stored procedures
+3. `functions.sql` → Functions
+4. `inserts.sql` → Sample data
+5. `triggers.sql` → Constraints via triggers
 
 ---
 
 ## Data Validation & Constraints
 
-**CHECK Constraints:**
-- `Age ≥ 0`
-- `Credits > 0`, `LectureHours > 0`, `LabHours > 0`
-- `MaxSeats > 0`, `MaxMarks > 0`
-- `Weightage: 0 < Weightage ≤ 100`
-- `Enrollment Status: 'Active', 'Completed', 'Dropped', 'Inactive'`
-- `PassFail: 'Pass', 'Fail'`
-- `Grade: A+, A, B+, B, C+, C, D, F`
+### CHECK Constraints
 
-**Foreign Key Constraints:**
-- CASCADE DELETE on child records when parent deleted
-- RESTRICT on critical relationships (prevents orphaned records)
+* Age ≥ 0
+* Credits, Hours, Seats, Marks > 0
+* Weightage between 0 and 100
+* Valid enums for Status, Grade, Pass/Fail
 
-**Referential Integrity:**
-- All enrollment references valid students & course offerings
-- All teaching assignments reference valid faculty & course offerings
-- All attempts reference valid students & assessments
+### Referential Integrity
+
+* Foreign keys enforce valid relationships
+* CASCADE DELETE removes dependent records
+* RESTRICT prevents invalid deletions
 
 ---
 
-## Testing Procedures, Functions & Triggers
+## Testing DB Logic (CLI)
 
 ### Procedures
 
-**Test `enroll_student()`:**
 ```sql
-CALL enroll_student(1, 1);  -- Enroll student 1 in offering 1
-```
-
-**Test `get_student_results()`:**
-```sql
-CALL get_student_results(1);  -- Get all results for student 1
+CALL enroll_student(1, 1);
+CALL get_student_results(1);
 ```
 
 ### Functions
 
-**Test `calculate_gpa()`:**
 ```sql
-SELECT calculate_gpa(1) AS StudentGPA;
--- Returns GPA based on grades: A+=4.0, A=4.0, B+=3.5, B=3.0, C+=2.5, C=2.0, D=1.0, F=0.0
-```
-
-**Test `count_enrollments()`:**
-```sql
-SELECT count_enrollments(1) AS TotalEnrolled;
--- Returns count of active enrollments in offering 1
+SELECT calculate_gpa(1);
+SELECT count_enrollments(1);
 ```
 
 ### Triggers
 
-**Test `prevent_enrollment_if_full`:**
-```sql
--- Set max seats to 1
-UPDATE COURSE_OFFERING SET MaxSeats = 1 WHERE OfferingID = 1;
+* Prevent enrollment if course is full
+* Automatically compute pass/fail
 
--- Try to enroll second student (should fail with "Course full")
-INSERT INTO ENROLLMENT (StudentID, OfferingID, EnrollmentDate, Status)
-VALUES (2, 1, CURDATE(), 'Active');
+---
+
+## Java Application Setup
+
+### 1. JDBC Driver
+
+Ensure:
+
+```
+java-integration/lib/mysql-connector-j.jar
 ```
 
-**Test `compute_pass_fail_on_insert`:**
-```sql
--- Insert attempt with marks < 40 (should set PassFail = 'Fail')
-INSERT INTO ATTEMPTS (StudentID, AssessmentID, MarksObtained, Grade)
-VALUES (1, 1, 35, 'D');
+#### VS Code Setup
 
--- Check result
-SELECT PassFail FROM ATTEMPTS WHERE StudentID = 1 AND AssessmentID = 1;
+Create:
+
+```
+.vscode/settings.json
+```
+
+```json
+{
+  "java.project.referencedLibraries": [
+    "java-integration/lib/mysql-connector-j.jar"
+  ]
+}
+```
+
+OR use:
+
+* Ctrl + Shift + P → **Java: Configure Classpath**
+
+---
+
+### 2. Configure Credentials
+
+Edit:
+
+```
+java-integration/src/database/DBConnection.java
+```
+
+```java
+private static final String DB_URL = "jdbc:mysql://localhost:3306/academic_management";
+private static final String USER = "your_username";
+private static final String PASS = "your_password";
 ```
 
 ---
 
-## File Structure
+### 3. Run Application
+
+```bash
+cd java-integration
+chmod +x run.sh
+./run.sh
+```
+On windows:
+
+cd java-integration
+bash run.sh
+---
+
+## Java Project Structure
 
 ```
-mini_project/
-├── normalization_demo/
-│   ├── unf.sql    (Unnormalized)
-│   ├── 1nf.sql    (Atomic values)
-│   ├── 2nf.sql    (No partial deps)
-│   └── 3nf.sql    (No transitive deps)
-│
-├── final_db/
-│   ├── schema.sql      (24 tables)
-│   ├── inserts.sql     (50+ records)
-│   ├── procedures.sql  (2 procedures)
-│   ├── functions.sql   (2 functions)
-│   ├── triggers.sql    (2 triggers)
-│   └── queries.sql     (6 queries)
-│
-└── README.md
+java-integration/
+├── lib/
+├── src/
+│   ├── Main.java
+│   ├── database/
+│   ├── service/
+│   └── ui/
 ```
 
+---
 
+## How Java Works (Under the Hood)
+
+```
+Main.java
+    ↓
+MainUI (Swing GUI)
+    ↓
+StudentService (logic)
+    ↓
+DBConnection (JDBC)
+    ↓
+MySQL Database
+```
+
+### Flow
+
+1. User clicks a button in GUI
+2. ActionListener triggers a method
+3. StudentService executes SQL or procedure
+4. DBConnection creates connection using DriverManager
+5. Results returned via ResultSet
+6. Output shown in GUI or terminal
+
+---
+
+## Java Features
+
+* CRUD operations (INSERT, UPDATE, DELETE, SELECT)
+* Stored Procedures:
+
+  * enroll_student()
+  * get_student_results()
+* Functions:
+
+  * calculate_gpa()
+
+---
+
+## GUI Usage (IMPORTANT)
+
+### Input Fields
+
+* Name, Email, DOB, Age
+* PersonID (for update/delete)
+* OfferingID (for enrollment)
+
+---
+
+### Correct Usage Flow
+
+#### 1. INSERT
+
+* Fill all fields except PersonID
+* Click **INSERT**
+* Note generated ID
+
+#### 2. VIEW
+
+* Click **VIEW**
+* Output appears in terminal
+
+#### 3. UPDATE
+
+* Enter PersonID + new values
+
+#### 4. DELETE
+
+* Enter PersonID
+
+#### 5. ENROLL
+
+* Enter PersonID + OfferingID
+
+#### 6. GET RESULTS
+
+* Enter PersonID
+
+#### 7. CALC GPA
+
+* Enter PersonID
+
+---
+
+## Testing Workflow
+
+1. **Setup database first** (run all SQL files)
+2. **INSERT** a student → note the PersonID
+3. **UPDATE** using that PersonID + new data
+4. **VIEW ALL** → check terminal output
+5. **ENROLL** with StudentID=1, OfferingID=1
+6. **GET RESULTS** → check terminal output (not GUI)
+7. **CALC GPA** → shows in GUI
+8. **DELETE** the inserted student
+
+### Important
+
+* Some outputs print to **terminal/console**, not GUI (VIEW ALL, GET RESULTS)
+* Find valid IDs:
+  ```bash
+  mysql academic_management -e "SELECT PersonID FROM STUDENT LIMIT 1;"
+  ```
+* Database must be fully setup before running Java app
+
+---
+
+## Concepts Demonstrated
+
+* JDBC (DriverManager, PreparedStatement, CallableStatement)
+* OOP (classes, interface, packages)
+* Exception handling (try-catch)
+* Swing GUI (event-driven programming)
+* Database normalization & integrity
+
+---
+
+## Important Notes
+
+* Database must be fully set up before running Java
+* Some outputs appear in terminal
+* Valid IDs required for operations
+* Designed for academic evaluation (simple, not overengineered)
+
+---
+
+## Summary
+
+This project combines:
+
+* DBMS theory (normalization)
+* Practical database design (BCNF)
+* Backend logic (procedures, triggers)
+* Java integration (JDBC)
+* GUI interaction (Swing)
+
+All implemented using beginner-level concepts aligned with coursework.
