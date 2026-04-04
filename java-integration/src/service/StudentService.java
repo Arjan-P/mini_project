@@ -42,9 +42,6 @@ public class StudentService implements StudentInterface {
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to insert student!");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
-            e.printStackTrace();
         }
 
         return personID;
@@ -78,9 +75,6 @@ public class StudentService implements StudentInterface {
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to update student!");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
-            e.printStackTrace();
         }
 
         return success;
@@ -110,9 +104,6 @@ public class StudentService implements StudentInterface {
 
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to delete student!");
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
             e.printStackTrace();
         }
 
@@ -155,9 +146,6 @@ public class StudentService implements StudentInterface {
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to retrieve students!");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
-            e.printStackTrace();
         }
     }
 
@@ -182,11 +170,7 @@ public class StudentService implements StudentInterface {
         } catch (SQLException e) {
             System.err.println("ERROR: Enrollment failed!");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
-            e.printStackTrace();
         }
-
         return success;
     }
 
@@ -232,9 +216,6 @@ public class StudentService implements StudentInterface {
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to retrieve results!");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
-            e.printStackTrace();
         }
     }
 
@@ -259,9 +240,6 @@ public class StudentService implements StudentInterface {
 
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to calculate GPA!");
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: Database driver not found!");
             e.printStackTrace();
         }
 

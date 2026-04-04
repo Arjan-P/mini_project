@@ -12,9 +12,8 @@ public class DBConnection {
 
     // Database credentials
     private static final String DB_URL = "jdbc:mysql://localhost:3306/academic_management";
-    private static final String USER = "";
-    private static final String PASS = ""; // Update if password exists
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String USER = "atharv";
+    private static final String PASS = "flower"; // Update if password exists
 
     private static Connection connection = null;
 
@@ -26,10 +25,8 @@ public class DBConnection {
      * @throws ClassNotFoundException if MySQL driver not found
      * @throws SQLException           if connection fails
      */
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+    public static Connection getConnection() throws SQLException {
         try {
-            // Load MySQL JDBC Driver
-            Class.forName(DRIVER);
 
             // Create new connection if null
             if (connection == null || connection.isClosed()) {
@@ -38,9 +35,6 @@ public class DBConnection {
             }
             return connection;
 
-        } catch (ClassNotFoundException e) {
-            System.err.println("ERROR: MySQL JDBC Driver not found!");
-            throw e;
         } catch (SQLException e) {
             System.err.println("ERROR: Database connection failed!");
             throw e;
