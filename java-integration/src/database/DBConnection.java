@@ -6,24 +6,20 @@ import java.sql.SQLException;
 
 /**
  * Database Connection Handler
- * Manages JDBC connection to MariaDB/MySQL
+ * Manages JDBC connection
  */
 public class DBConnection {
 
     // Database credentials
     private static final String DB_URL = "jdbc:mysql://localhost:3306/academic_management";
-    private static final String USER = "atharv";
-    private static final String PASS = "flower"; // Update if password exists
+    private static final String USER = "";
+    private static final String PASS = ""; // Update if password exists
 
     private static Connection connection = null;
 
     /**
      * Get database connection
      * Creates new connection if not exists
-     *
-     * @return Connection object
-     * @throws ClassNotFoundException if MySQL driver not found
-     * @throws SQLException           if connection fails
      */
     public static Connection getConnection() throws SQLException {
         try {
@@ -41,7 +37,7 @@ public class DBConnection {
         }
     }
 
-    /**
+    /*
      * Close database connection
      */
     public static void closeConnection() {
