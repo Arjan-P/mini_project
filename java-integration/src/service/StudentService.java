@@ -2,6 +2,7 @@ package service;
 
 import database.DBConnection;
 import java.sql.*;
+import java.time.LocalDate;
 
 /*
  Student Service Implementation
@@ -10,11 +11,11 @@ import java.sql.*;
 */
 public class StudentService implements StudentInterface {
 
-    /*
-     * INSERT: Add new student to PERSON table
-     */
     @Override
     public int insertStudent(String firstName, String lastName, String email, String dob) {
+        validateEmail(email);
+        validateDOB(dob);
+
         String insertSQL = "INSERT INTO PERSON (FirstName, LastName, Email, DOB) VALUES (?, ?, ?, ?)";
         int personID = -1;
 
@@ -29,7 +30,6 @@ public class StudentService implements StudentInterface {
             int rowsInserted = pstmt.executeUpdate();
 
             if (rowsInserted > 0) {
-                // Get generated PersonID
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         personID = rs.getInt(1);
@@ -46,12 +46,8 @@ public class StudentService implements StudentInterface {
         return personID;
     }
 
-    /**
-     * UPDATE: Modify student details (flexible - at least one field required)
-     */
     @Override
     public boolean updateStudent(int personID, String firstName, String lastName, String email, String dob) {
-        // Check if at least one field is provided
         if ((firstName == null || firstName.isEmpty()) &&
                 (lastName == null || lastName.isEmpty()) &&
                 (email == null || email.isEmpty()) &&
@@ -59,7 +55,13 @@ public class StudentService implements StudentInterface {
             throw new StudentServiceException("At least one field must be provided for update");
         }
 
-        // Build SQL dynamically based on provided fields
+        if (email != null && !email.isEmpty()) {
+            validateEmail(email);
+        }
+        if (dob != null && !dob.isEmpty()) {
+            validateDOB(dob);
+        }
+
         StringBuilder updateSQL = new StringBuilder("UPDATE PERSON SET ");
         int paramCount = 0;
 
@@ -69,25 +71,22 @@ public class StudentService implements StudentInterface {
         }
 
         if (lastName != null && !lastName.isEmpty()) {
-            if (paramCount > 0) {
+            if (paramCount > 0)
                 updateSQL.append(", ");
-            }
             updateSQL.append("LastName = ?");
             paramCount++;
         }
 
         if (email != null && !email.isEmpty()) {
-            if (paramCount > 0) {
+            if (paramCount > 0)
                 updateSQL.append(", ");
-            }
             updateSQL.append("Email = ?");
             paramCount++;
         }
 
         if (dob != null && !dob.isEmpty()) {
-            if (paramCount > 0) {
+            if (paramCount > 0)
                 updateSQL.append(", ");
-            }
             updateSQL.append("DOB = ?");
             paramCount++;
         }
@@ -200,5 +199,47 @@ public class StudentService implements StudentInterface {
         }
 
         return result.toString();
+    }
+
+    /**
+     * VALIDATION: Check email format
+     */
+    private void validateEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new StudentServiceException("Email cannot be empty");
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new StudentServiceException("Invalid email format. Expected: example@domain.com");
+        }
+    }
+
+    /**
+     * VALIDATION: Check DOB format and range
+     */
+    private void validateDOB(String dob) {
+        if (dob == null || dob.isEmpty()) {
+            throw new StudentServiceException("Date of Birth cannot be empty");
+        }
+        try {
+            LocalDate birthDate = LocalDate.parse(dob);
+            LocalDate today = LocalDate.now();
+
+            if (birthDate.isAfter(today)) {
+                throw new StudentServiceException("Date of Birth cannot be in the future");
+            }
+
+            int age = today.getYear() - birthDate.getYear();
+            if (today.getMonthValue() < birthDate.getMonthValue() ||
+                    (today.getMonthValue() == birthDate.getMonthValue()
+                            && today.getDayOfMonth() < birthDate.getDayOfMonth())) {
+                age--;
+            }
+
+            if (age < 15 || age > 70) {
+                throw new StudentServiceException("Age must be between 15 and 70 years");
+            }
+        } catch (java.time.format.DateTimeParseException e) {
+            throw new StudentServiceException("Invalid date format. Expected: YYYY-MM-DD");
+        }
     }
 }
