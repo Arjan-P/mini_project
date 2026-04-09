@@ -11,4 +11,17 @@ CREATE FUNCTION count_enrollments(p_offering_id INT)
 RETURNS INT
 DETERMINISTIC READS SQL DATA
 RETURN IFNULL((SELECT COUNT(*) FROM ENROLLMENT WHERE OfferingID = p_offering_id AND Status='Active'), 0) //
+
+
+CREATE FUNCTION get_student_enrollment_count(p_student_id INT)
+RETURNS INT
+DETERMINISTIC READS SQL DATA
+RETURN (SELECT COUNT(*) FROM ENROLLMENT WHERE StudentID = p_student_id AND Status='Active') //
+
+
+CREATE FUNCTION get_faculty_teaching_load(p_faculty_id INT)
+RETURNS INT
+DETERMINISTIC READS SQL DATA
+RETURN (SELECT COUNT(DISTINCT OfferingID) FROM TEACHING_ASSIGNMENT WHERE FacultyID = p_faculty_id) //
+
 DELIMITER ;

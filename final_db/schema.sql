@@ -3,9 +3,7 @@ CREATE TABLE PERSON (
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
-    DOB DATE NOT NULL,
-    Age INT,
-    CHECK (Age >= 0)
+    DOB DATE NOT NULL
 );
 
 CREATE TABLE PERSON_PHONE (
@@ -27,7 +25,8 @@ CREATE TABLE PROGRAM (
     DurationYears INT NOT NULL,
     DepartmentID INT NOT NULL,
     FOREIGN KEY (DepartmentID) REFERENCES DEPARTMENT(DepartmentID) ON DELETE RESTRICT,
-    UNIQUE KEY (ProgramName, DepartmentID)
+    UNIQUE KEY (ProgramName, DepartmentID),
+    CHECK (DurationYears BETWEEN 1 AND 6)
 );
 
 CREATE TABLE STUDENT (
@@ -55,7 +54,7 @@ CREATE TABLE COURSE (
     Credits INT NOT NULL,
     ProgramID INT NOT NULL,
     FOREIGN KEY (ProgramID) REFERENCES PROGRAM(ProgramID) ON DELETE RESTRICT,
-    CHECK (Credits > 0),
+    CHECK (Credits BETWEEN 1 AND 6),
     UNIQUE KEY (CourseTitle, ProgramID)
 );
 
@@ -78,8 +77,7 @@ CREATE TABLE SEMESTER (
     SemesterName VARCHAR(50) NOT NULL UNIQUE,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
-    Duration INT NOT NULL,
-    CHECK (Duration > 0 AND EndDate > StartDate)
+    CHECK (EndDate > StartDate)
 );
 
 CREATE TABLE COURSE_OFFERING (
@@ -99,17 +97,16 @@ CREATE TABLE ENROLLMENT (
     StudentID INT NOT NULL,
     OfferingID INT NOT NULL,
     EnrollmentDate DATE NOT NULL,
-    Status VARCHAR(20) NOT NULL,
+    Status ENUM('Active', 'Completed', 'Dropped', 'Inactive') NOT NULL,
     PRIMARY KEY (StudentID, OfferingID),
     FOREIGN KEY (StudentID) REFERENCES STUDENT(PersonID) ON DELETE CASCADE,
-    FOREIGN KEY (OfferingID) REFERENCES COURSE_OFFERING(OfferingID) ON DELETE CASCADE,
-    CHECK (Status IN ('Active', 'Completed', 'Dropped', 'Inactive'))
+    FOREIGN KEY (OfferingID) REFERENCES COURSE_OFFERING(OfferingID) ON DELETE CASCADE
 );
 
 CREATE TABLE TEACHING_ASSIGNMENT (
     FacultyID INT NOT NULL,
     OfferingID INT NOT NULL,
-    Role VARCHAR(50) NOT NULL,
+    Role ENUM('Instructor', 'Teaching Assistant', 'Lab Assistant') NOT NULL,
     AssignedHours INT NOT NULL,
     PRIMARY KEY (FacultyID, OfferingID),
     FOREIGN KEY (FacultyID) REFERENCES FACULTY(PersonID) ON DELETE CASCADE,
@@ -155,13 +152,11 @@ CREATE TABLE ATTEMPTS (
     StudentID INT NOT NULL,
     AssessmentID INT NOT NULL,
     MarksObtained INT NOT NULL,
-    Grade CHAR(2),
-    PassFail VARCHAR(10),
+    Grade ENUM('A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F'),
     PRIMARY KEY (StudentID, AssessmentID),
     FOREIGN KEY (StudentID) REFERENCES STUDENT(PersonID) ON DELETE CASCADE,
     FOREIGN KEY (AssessmentID) REFERENCES ASSESSMENT(AssessmentID) ON DELETE CASCADE,
-    CHECK (MarksObtained >= 0 AND Grade IN ('A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F') OR Grade IS NULL),
-    CHECK (PassFail IN ('Pass', 'Fail') OR PassFail IS NULL)
+    CHECK (MarksObtained >= 0)
 );
 
 

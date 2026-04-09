@@ -10,11 +10,13 @@ BEGIN
   END IF;
 END //
 
-CREATE TRIGGER compute_pass_fail_on_insert
-BEFORE INSERT ON ATTEMPTS
+CREATE TRIGGER prevent_duplicate_enrollment
+BEFORE INSERT ON ENROLLMENT
 FOR EACH ROW
 BEGIN
-  SET NEW.PassFail = IF(NEW.MarksObtained >= 40, 'Pass', 'Fail');
+  IF EXISTS (SELECT 1 FROM ENROLLMENT WHERE StudentID = NEW.StudentID AND OfferingID = NEW.OfferingID) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Student already enrolled in this course';
+  END IF;
 END //
 
 DELIMITER ;
