@@ -6,10 +6,10 @@ import java.time.LocalDate;
 
 /*
  Student Service Implementation
- Implements StudentInterface with JDBC operations
+ Extends BaseService and Implements StudentInterface with JDBC operations
  Handles INSERT, UPDATE, DELETE, SELECT, Stored Procedures, and Functions
 */
-public class StudentService implements StudentInterface {
+public class StudentService extends BaseService implements StudentInterface {
 
     @Override
     public int insertStudent(String firstName, String lastName, String email, String dob) {
@@ -201,45 +201,4 @@ public class StudentService implements StudentInterface {
         return result.toString();
     }
 
-    /**
-     * VALIDATION: Check email format
-     */
-    private void validateEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            throw new StudentServiceException("Email cannot be empty");
-        }
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            throw new StudentServiceException("Invalid email format. Expected: example@domain.com");
-        }
-    }
-
-    /**
-     * VALIDATION: Check DOB format and range
-     */
-    private void validateDOB(String dob) {
-        if (dob == null || dob.isEmpty()) {
-            throw new StudentServiceException("Date of Birth cannot be empty");
-        }
-        try {
-            LocalDate birthDate = LocalDate.parse(dob);
-            LocalDate today = LocalDate.now();
-
-            if (birthDate.isAfter(today)) {
-                throw new StudentServiceException("Date of Birth cannot be in the future");
-            }
-
-            int age = today.getYear() - birthDate.getYear();
-            if (today.getMonthValue() < birthDate.getMonthValue() ||
-                    (today.getMonthValue() == birthDate.getMonthValue()
-                            && today.getDayOfMonth() < birthDate.getDayOfMonth())) {
-                age--;
-            }
-
-            if (age < 15 || age > 70) {
-                throw new StudentServiceException("Age must be between 15 and 70 years");
-            }
-        } catch (java.time.format.DateTimeParseException e) {
-            throw new StudentServiceException("Invalid date format. Expected: YYYY-MM-DD");
-        }
-    }
 }
