@@ -5,6 +5,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 import service.StudentService;
+import service.StudentServiceException;
 
 /**
  * Main User Interface
@@ -246,6 +247,8 @@ public class MainUI extends JFrame {
 
         } catch (NumberFormatException e) {
             appendOutput("✗ Invalid age format!");
+        } catch (StudentServiceException e) {
+            appendOutput("✗ Error: " + e.getMessage());
         }
     }
 
@@ -271,6 +274,8 @@ public class MainUI extends JFrame {
 
         } catch (NumberFormatException e) {
             appendOutput("✗ Invalid PersonID or Age format!");
+        } catch (StudentServiceException e) {
+            appendOutput("✗ Error: " + e.getMessage());
         }
     }
 
@@ -294,6 +299,8 @@ public class MainUI extends JFrame {
 
         } catch (NumberFormatException e) {
             appendOutput("✗ Invalid PersonID format!");
+        } catch (StudentServiceException e) {
+            appendOutput("✗ Error: " + e.getMessage());
         }
     }
 

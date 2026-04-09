@@ -12,8 +12,8 @@ public class DBConnection {
 
     // Database credentials
     private static final String DB_URL = "jdbc:mysql://localhost:3306/academic_management";
-    private static final String USER = "";
-    private static final String PASS = ""; // Update if password exists
+    private static final String USER = "atharv";
+    private static final String PASS = "flowers"; // Update if password exists
 
     private static Connection connection = null;
 

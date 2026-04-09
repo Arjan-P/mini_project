@@ -41,7 +41,7 @@ public class StudentService implements StudentInterface {
 
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to insert student!");
-            e.printStackTrace();
+            throw new StudentServiceException("Insert failed: " + e.getMessage(), e);
         }
 
         return personID;
@@ -74,7 +74,7 @@ public class StudentService implements StudentInterface {
 
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to update student!");
-            e.printStackTrace();
+            throw new StudentServiceException("Update failed for PersonID " + personID + ": " + e.getMessage(), e);
         }
 
         return success;
@@ -104,7 +104,7 @@ public class StudentService implements StudentInterface {
 
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to delete student!");
-            e.printStackTrace();
+            throw new StudentServiceException("Delete failed for PersonID " + personID + ": " + e.getMessage(), e);
         }
 
         return success;
