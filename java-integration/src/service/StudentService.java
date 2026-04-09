@@ -3,19 +3,19 @@ package service;
 import database.DBConnection;
 import java.sql.*;
 
-/**
- * Student Service Implementation
- * Implements StudentInterface with JDBC operations
- * Handles INSERT, UPDATE, DELETE, SELECT, Stored Procedures, and Functions
- */
+/*
+ Student Service Implementation
+ Implements StudentInterface with JDBC operations
+ Handles INSERT, UPDATE, DELETE, SELECT, Stored Procedures, and Functions
+*/
 public class StudentService implements StudentInterface {
 
-    /**
+    /*
      * INSERT: Add new student to PERSON table
      */
     @Override
-    public int insertStudent(String firstName, String lastName, String email, String dob, int age) {
-        String insertSQL = "INSERT INTO PERSON (FirstName, LastName, Email, DOB, Age) VALUES (?, ?, ?, ?, ?)";
+    public int insertStudent(String firstName, String lastName, String email, String dob) {
+        String insertSQL = "INSERT INTO PERSON (FirstName, LastName, Email, DOB) VALUES (?, ?, ?, ?)";
         int personID = -1;
 
         try (Connection conn = DBConnection.getConnection();
@@ -25,7 +25,6 @@ public class StudentService implements StudentInterface {
             pstmt.setString(2, lastName);
             pstmt.setString(3, email);
             pstmt.setDate(4, Date.valueOf(dob));
-            pstmt.setInt(5, age);
 
             int rowsInserted = pstmt.executeUpdate();
 
@@ -48,20 +47,71 @@ public class StudentService implements StudentInterface {
     }
 
     /**
-     * UPDATE: Modify student details
+     * UPDATE: Modify student details (flexible - at least one field required)
      */
     @Override
-    public boolean updateStudent(int personID, String firstName, String lastName, int age) {
-        String updateSQL = "UPDATE PERSON SET FirstName = ?, LastName = ?, Age = ? WHERE PersonID = ?";
+    public boolean updateStudent(int personID, String firstName, String lastName, String email, String dob) {
+        // Check if at least one field is provided
+        if ((firstName == null || firstName.isEmpty()) &&
+                (lastName == null || lastName.isEmpty()) &&
+                (email == null || email.isEmpty()) &&
+                (dob == null || dob.isEmpty())) {
+            throw new StudentServiceException("At least one field must be provided for update");
+        }
+
+        // Build SQL dynamically based on provided fields
+        StringBuilder updateSQL = new StringBuilder("UPDATE PERSON SET ");
+        int paramCount = 0;
+
+        if (firstName != null && !firstName.isEmpty()) {
+            updateSQL.append("FirstName = ?");
+            paramCount++;
+        }
+
+        if (lastName != null && !lastName.isEmpty()) {
+            if (paramCount > 0) {
+                updateSQL.append(", ");
+            }
+            updateSQL.append("LastName = ?");
+            paramCount++;
+        }
+
+        if (email != null && !email.isEmpty()) {
+            if (paramCount > 0) {
+                updateSQL.append(", ");
+            }
+            updateSQL.append("Email = ?");
+            paramCount++;
+        }
+
+        if (dob != null && !dob.isEmpty()) {
+            if (paramCount > 0) {
+                updateSQL.append(", ");
+            }
+            updateSQL.append("DOB = ?");
+            paramCount++;
+        }
+
+        updateSQL.append(" WHERE PersonID = ?");
+
         boolean success = false;
-
         try (Connection conn = DBConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+                PreparedStatement pstmt = conn.prepareStatement(updateSQL.toString())) {
 
-            pstmt.setString(1, firstName);
-            pstmt.setString(2, lastName);
-            pstmt.setInt(3, age);
-            pstmt.setInt(4, personID);
+            int paramIndex = 1;
+            if (firstName != null && !firstName.isEmpty()) {
+                pstmt.setString(paramIndex++, firstName);
+            }
+            if (lastName != null && !lastName.isEmpty()) {
+                pstmt.setString(paramIndex++, lastName);
+            }
+            if (email != null && !email.isEmpty()) {
+                pstmt.setString(paramIndex++, email);
+            }
+            if (dob != null && !dob.isEmpty()) {
+                pstmt.setDate(paramIndex++, Date.valueOf(dob));
+            }
+            pstmt.setInt(paramIndex, personID);
 
             int rowsUpdated = pstmt.executeUpdate();
 
@@ -114,16 +164,17 @@ public class StudentService implements StudentInterface {
      * SELECT: View all students
      */
     @Override
-    public void viewAllStudents() {
-        String selectSQL = "SELECT PersonID, FirstName, LastName, Email, Age FROM PERSON LIMIT 10";
+    public String viewAllStudents() {
+        String selectSQL = "SELECT PersonID, FirstName, LastName, Email, DOB FROM PERSON";
+        StringBuilder result = new StringBuilder();
 
         try (Connection conn = DBConnection.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(selectSQL)) {
 
-            System.out.println("\n" + "=".repeat(70));
-            System.out.println("STUDENT LIST");
-            System.out.println("=".repeat(70));
+            result.append("\n").append("=".repeat(80)).append("\n");
+            result.append("STUDENT LIST\n");
+            result.append("=".repeat(80)).append("\n");
 
             boolean hasRecords = false;
             while (rs.next()) {
@@ -132,117 +183,22 @@ public class StudentService implements StudentInterface {
                 String firstName = rs.getString("FirstName");
                 String lastName = rs.getString("LastName");
                 String email = rs.getString("Email");
-                int age = rs.getInt("Age");
+                String dob = rs.getString("DOB");
 
-                System.out.printf("ID: %-4d | Name: %-20s | Email: %-30s | Age: %d%n",
-                        id, firstName + " " + lastName, email, age);
+                result.append(String.format("ID: %-4d | Name: %-20s | Email: %-25s | DOB: %s%n",
+                        id, firstName + " " + lastName, email, dob));
             }
 
             if (!hasRecords) {
-                System.out.println("✗ No students found!");
+                result.append("✗ No students found!\n");
             }
-            System.out.println("=".repeat(70) + "\n");
+            result.append("=".repeat(80)).append("\n");
 
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to retrieve students!");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * STORED PROCEDURE: Enroll student in course offering
-     */
-    @Override
-    public boolean enrollStudent(int studentID, int offeringID) {
-        String procedureCall = "{CALL enroll_student(?, ?)}";
-        boolean success = false;
-
-        try (Connection conn = DBConnection.getConnection();
-                CallableStatement cstmt = conn.prepareCall(procedureCall)) {
-
-            cstmt.setInt(1, studentID);
-            cstmt.setInt(2, offeringID);
-
-            cstmt.execute();
-            System.out.println("✓ Student enrolled successfully!");
-            success = true;
-
-        } catch (SQLException e) {
-            System.err.println("ERROR: Enrollment failed!");
-            e.printStackTrace();
-        }
-        return success;
-    }
-
-    /**
-     * STORED PROCEDURE: Get student results
-     */
-    @Override
-    public void getStudentResults(int studentID) {
-        String procedureCall = "{CALL get_student_results(?)}";
-
-        try (Connection conn = DBConnection.getConnection();
-                CallableStatement cstmt = conn.prepareCall(procedureCall)) {
-
-            cstmt.setInt(1, studentID);
-
-            try (ResultSet rs = cstmt.executeQuery()) {
-                System.out.println("\n" + "=".repeat(100));
-                System.out.println("STUDENT RESULTS");
-                System.out.println("=".repeat(100));
-
-                boolean hasRecords = false;
-                while (rs.next()) {
-                    hasRecords = true;
-                    String firstName = rs.getString("FirstName");
-                    String lastName = rs.getString("LastName");
-                    String rollNo = rs.getString("RollNo");
-                    String courseTitle = rs.getString("CourseTitle");
-                    String assessmentTitle = rs.getString("Title");
-                    int marks = rs.getInt("MarksObtained");
-                    String grade = rs.getString("Grade");
-
-                    System.out.printf(
-                            "Student: %s %s (Roll: %s) | Course: %s | Assessment: %s | Marks: %d | Grade: %s%n",
-                            firstName, lastName, rollNo, courseTitle, assessmentTitle, marks, grade);
-                }
-
-                if (!hasRecords) {
-                    System.out.println("✗ No results found for student!");
-                }
-                System.out.println("=".repeat(100) + "\n");
-            }
-
-        } catch (SQLException e) {
-            System.err.println("ERROR: Failed to retrieve results!");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * FUNCTION: Calculate student GPA
-     */
-    @Override
-    public double calculateGPA(int studentID) {
-        String functionCall = "{? = CALL calculate_gpa(?)}";
-        double gpa = 0.0;
-
-        try (Connection conn = DBConnection.getConnection();
-                CallableStatement cstmt = conn.prepareCall(functionCall)) {
-
-            cstmt.registerOutParameter(1, Types.DECIMAL);
-            cstmt.setInt(2, studentID);
-
-            cstmt.execute();
-            gpa = cstmt.getDouble(1);
-
-            System.out.println("✓ GPA calculated successfully! GPA: " + gpa);
-
-        } catch (SQLException e) {
-            System.err.println("ERROR: Failed to calculate GPA!");
-            e.printStackTrace();
+            result.append("✗ Error retrieving students: ").append(e.getMessage());
         }
 
-        return gpa;
+        return result.toString();
     }
 }
