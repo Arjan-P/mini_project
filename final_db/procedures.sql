@@ -8,7 +8,7 @@ END //
 
 CREATE PROCEDURE get_student_results(IN p_student_id INT)
 BEGIN
-  SELECT p.FirstName, p.LastName, s.RollNo, c.CourseTitle, a.Title, att.MarksObtained, att.Grade, att.PassFail
+  SELECT p.FirstName, p.LastName, s.RollNo, c.CourseTitle, a.Title, att.MarksObtained, att.Grade
   FROM STUDENT s JOIN PERSON p ON s.PersonID = p.PersonID
   JOIN ENROLLMENT e ON s.PersonID = e.StudentID
   JOIN COURSE_OFFERING co ON e.OfferingID = co.OfferingID

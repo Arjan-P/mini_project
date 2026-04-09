@@ -16,7 +16,7 @@ LEFT JOIN ENROLLMENT e ON co.OfferingID = e.OfferingID AND e.Status = 'Active'
 GROUP BY co.OfferingID, c.CourseTitle, co.Section, sem.SemesterName, co.MaxSeats
 ORDER BY c.CourseTitle;
 
-SELECT s.RollNo, p.FirstName, p.LastName, c.CourseTitle, att.MarksObtained, att.Grade, att.PassFail
+SELECT s.RollNo, p.FirstName, p.LastName, c.CourseTitle, att.MarksObtained, att.Grade
 FROM ATTEMPTS att
 JOIN STUDENT s ON att.StudentID = s.PersonID
 JOIN PERSON p ON s.PersonID = p.PersonID
@@ -39,7 +39,7 @@ FROM ATTEMPTS att
 JOIN ASSESSMENT a ON att.AssessmentID = a.AssessmentID
 JOIN COURSE_OFFERING co ON a.OfferingID = co.OfferingID
 JOIN COURSE c ON co.CourseID = c.CourseID
-WHERE att.PassFail = 'Pass'
+WHERE att.MarksObtained >= 40
 GROUP BY co.OfferingID, c.CourseTitle, co.Section
 ORDER BY c.CourseTitle;
 

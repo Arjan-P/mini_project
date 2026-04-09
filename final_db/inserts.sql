@@ -18,17 +18,17 @@ INSERT INTO PROGRAM (ProgramName, Level, DurationYears, DepartmentID) VALUES
 ('Bachelor of Technology in EE', 'Undergraduate', 4, 4);
 
 
-INSERT INTO PERSON (FirstName, LastName, Email, DOB, Age) VALUES
-('Rajesh', 'Kumar', 'rajesh.kumar@university.edu', '2003-05-15', 21),
-('Priya', 'Singh', 'priya.singh@university.edu', '2003-08-22', 20),
-('Arjun', 'Patel', 'arjun.patel@university.edu', '2003-11-10', 20),
-('Neha', 'Gupta', 'neha.gupta@university.edu', '2004-02-18', 20),
-('Vikram', 'Sharma', 'vikram.sharma@university.edu', '2003-07-25', 21),
-('Dr. Amit', 'Nair', 'amit.nair@university.edu', '1975-03-12', 49),
-('Dr. Sneha', 'Verma', 'sneha.verma@university.edu', '1978-06-20', 46),
-('Dr. Rahul', 'Das', 'rahul.das@university.edu', '1980-09-08', 44),
-('Prof. Anjali', 'Iyer', 'anjali.iyer@university.edu', '1977-12-15', 47),
-('Prof. Anil', 'Bhat', 'anil.bhat@university.edu', '1982-01-30', 42);
+INSERT INTO PERSON (FirstName, LastName, Email, DOB) VALUES
+('Rajesh', 'Kumar', 'rajesh.kumar@university.edu', '2003-05-15'),
+('Priya', 'Singh', 'priya.singh@university.edu', '2003-08-22'),
+('Arjun', 'Patel', 'arjun.patel@university.edu', '2003-11-10'),
+('Neha', 'Gupta', 'neha.gupta@university.edu', '2004-02-18'),
+('Vikram', 'Sharma', 'vikram.sharma@university.edu', '2003-07-25'),
+('Dr. Amit', 'Nair', 'amit.nair@university.edu', '1975-03-12'),
+('Dr. Sneha', 'Verma', 'sneha.verma@university.edu', '1978-06-20'),
+('Dr. Rahul', 'Das', 'rahul.das@university.edu', '1980-09-08'),
+('Prof. Anjali', 'Iyer', 'anjali.iyer@university.edu', '1977-12-15'),
+('Prof. Anil', 'Bhat', 'anil.bhat@university.edu', '1982-01-30');
 
 
 INSERT INTO PERSON_PHONE (PersonID, PhoneNumber) VALUES
@@ -90,10 +90,10 @@ INSERT INTO LAB_COURSE (CourseID, LabHours) VALUES
 (10, 24);
 
 
-INSERT INTO SEMESTER (SemesterName, StartDate, EndDate, Duration) VALUES
-('Spring 2024', '2024-01-15', '2024-05-15', 16),
-('Summer 2024', '2024-06-01', '2024-07-31', 8),
-('Fall 2024', '2024-08-15', '2024-12-15', 16);
+INSERT INTO SEMESTER (SemesterName, StartDate, EndDate) VALUES
+('Spring 2024', '2024-01-15', '2024-05-15'),
+('Summer 2024', '2024-06-01', '2024-07-31'),
+('Fall 2024', '2024-08-15', '2024-12-15');
 
 
 INSERT INTO COURSE_OFFERING (CourseID, SemesterID, Section, MaxSeats) VALUES
@@ -182,16 +182,16 @@ INSERT INTO ASSESSMENT_ITEM (AssessmentID, ItemName, MaxMarks, Weightage) VALUES
 (9, 'Practical Work', 100, 100.0);
 
 
-INSERT INTO ATTEMPTS (StudentID, AssessmentID, MarksObtained, Grade, PassFail) VALUES
-(1, 1, 18, 'A', 'Pass'),
-(1, 2, 42, 'B+', 'Pass'),
-(1, 4, 55, 'A', 'Pass'),
-(2, 6, 22, 'A+', 'Pass'),
-(2, 7, 85, 'A', 'Pass'),
-(3, 3, 45, 'B', 'Pass'),
-(3, 5, 68, 'A', 'Pass'),
-(4, 8, 48, 'B+', 'Pass'),
-(5, 9, 92, 'A+', 'Pass'),
-(1, 3, 38, 'B', 'Pass'),
-(2, 8, 42, 'B+', 'Pass');
+INSERT INTO ATTEMPTS (StudentID, AssessmentID, MarksObtained, Grade) VALUES
+(1, 1, 18, 'A'),
+(1, 2, 42, 'B+'),
+(1, 4, 55, 'A'),
+(2, 6, 22, 'A+'),
+(2, 7, 85, 'A'),
+(3, 3, 45, 'B'),
+(3, 5, 68, 'A'),
+(4, 8, 48, 'B+'),
+(5, 9, 92, 'A+'),
+(1, 3, 38, 'B'),
+(2, 8, 42, 'B+');
 
