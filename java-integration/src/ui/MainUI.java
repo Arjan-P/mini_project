@@ -6,18 +6,18 @@ import java.awt.*;
 import service.StudentService;
 import service.StudentServiceException;
 
-/**
- * Main User Interface
- * Simple Swing GUI for DBMS operations
- * Provides buttons for INSERT, UPDATE, DELETE, SELECT, and advanced operations
+/*
+ Main User Interface
+ Simple Swing GUI for DBMS operations
+ Provides buttons for INSERT, UPDATE, DELETE, SELECT, and advanced operations
  */
 public class MainUI extends JFrame {
 
     private StudentService studentService;
 
     // GUI Components
-    private JTextField tfFirstName, tfLastName, tfEmail, tfDOB, tfAge, tfPersonID, tfOfferingID;
-    private JButton btnInsert, btnUpdate, btnDelete, btnView, btnEnroll, btnResults, btnGPA;
+    private JTextField tfFirstName, tfLastName, tfEmail, tfDOB, tfPersonID;
+    private JButton btnInsert, btnUpdate, btnDelete, btnView;
     private JTextArea taOutput;
     private JScrollPane scrollPane;
 
@@ -101,29 +101,13 @@ public class MainUI extends JFrame {
         tfDOB.setPreferredSize(new Dimension(200, 35));
         panel.add(tfDOB);
 
-        JLabel lbl5 = new JLabel("Age:");
+        JLabel lbl5 = new JLabel("PersonID:");
         lbl5.setFont(new Font("Arial", Font.PLAIN, 16));
         panel.add(lbl5);
-        tfAge = new JTextField(10);
-        tfAge.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfAge.setPreferredSize(new Dimension(120, 35));
-        panel.add(tfAge);
-
-        JLabel lbl6 = new JLabel("PersonID:");
-        lbl6.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl6);
         tfPersonID = new JTextField(12);
         tfPersonID.setFont(new Font("Arial", Font.PLAIN, 16));
         tfPersonID.setPreferredSize(new Dimension(140, 35));
         panel.add(tfPersonID);
-
-        JLabel lbl7 = new JLabel("OfferingID:");
-        lbl7.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl7);
-        tfOfferingID = new JTextField(12);
-        tfOfferingID.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfOfferingID.setPreferredSize(new Dimension(140, 35));
-        panel.add(tfOfferingID);
 
         return panel;
     }
@@ -158,21 +142,6 @@ public class MainUI extends JFrame {
         btnView = createButton("VIEW ALL", new Color(255, 152, 0));
         btnView.addActionListener(e -> handleViewAll());
         panel.add(btnView);
-
-        // ENROLL Button
-        btnEnroll = createButton("ENROLL", new Color(156, 39, 176));
-        btnEnroll.addActionListener(e -> handleEnroll());
-        panel.add(btnEnroll);
-
-        // GET RESULTS Button
-        btnResults = createButton("GET RESULTS", new Color(0, 150, 136));
-        btnResults.addActionListener(e -> handleGetResults());
-        panel.add(btnResults);
-
-        // CALCULATE GPA Button
-        btnGPA = createButton("CALC GPA", new Color(233, 30, 99));
-        btnGPA.addActionListener(e -> handleCalculateGPA());
-        panel.add(btnGPA);
 
         // CLEAR Button
         JButton btnClear = createButton("CLEAR", new Color(158, 158, 158));
@@ -231,21 +200,20 @@ public class MainUI extends JFrame {
             String lastName = tfLastName.getText().trim();
             String email = tfEmail.getText().trim();
             String dob = tfDOB.getText().trim();
-            int age = Integer.parseInt(tfAge.getText().trim());
 
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || dob.isEmpty()) {
                 appendOutput("✗ Please fill all fields!");
                 return;
             }
 
-            int personID = studentService.insertStudent(firstName, lastName, email, dob, age);
+            int personID = studentService.insertStudent(firstName, lastName, email, dob);
             if (personID > 0) {
                 appendOutput("✓ Insert successful! PersonID: " + personID);
                 clearFields();
             }
 
         } catch (NumberFormatException e) {
-            appendOutput("✗ Invalid age format!");
+            appendOutput("✗ Invalid input format!");
         } catch (StudentServiceException e) {
             appendOutput("✗ Error: " + e.getMessage());
         }
@@ -259,20 +227,21 @@ public class MainUI extends JFrame {
             int personID = Integer.parseInt(tfPersonID.getText().trim());
             String firstName = tfFirstName.getText().trim();
             String lastName = tfLastName.getText().trim();
-            int age = Integer.parseInt(tfAge.getText().trim());
+            String email = tfEmail.getText().trim();
+            String dob = tfDOB.getText().trim();
 
-            if (firstName.isEmpty() || lastName.isEmpty()) {
-                appendOutput("✗ Please fill name and age fields!");
+            if (firstName.isEmpty() && lastName.isEmpty() && email.isEmpty() && dob.isEmpty()) {
+                appendOutput("✗ Please enter at least one field to update!");
                 return;
             }
 
-            if (studentService.updateStudent(personID, firstName, lastName, age)) {
+            if (studentService.updateStudent(personID, firstName, lastName, email, dob)) {
                 appendOutput("✓ Update successful!");
                 clearFields();
             }
 
         } catch (NumberFormatException e) {
-            appendOutput("✗ Invalid PersonID or Age format!");
+            appendOutput("✗ Invalid PersonID format!");
         } catch (StudentServiceException e) {
             appendOutput("✗ Error: " + e.getMessage());
         }
@@ -307,55 +276,8 @@ public class MainUI extends JFrame {
      * VIEW ALL operation handler
      */
     private void handleViewAll() {
-        appendOutput("\n--- Retrieving all students ---");
-        studentService.viewAllStudents();
-        appendOutput("View operation completed. Check console for details.");
-    }
-
-    /**
-     * ENROLL operation handler
-     */
-    private void handleEnroll() {
-        try {
-            int studentID = Integer.parseInt(tfPersonID.getText().trim());
-            int offeringID = Integer.parseInt(tfOfferingID.getText().trim());
-
-            if (studentService.enrollStudent(studentID, offeringID)) {
-                appendOutput("✓ Enrollment successful!");
-            }
-
-        } catch (NumberFormatException e) {
-            appendOutput("✗ Invalid StudentID or OfferingID format!");
-        }
-    }
-
-    /**
-     * GET RESULTS operation handler
-     */
-    private void handleGetResults() {
-        try {
-            int studentID = Integer.parseInt(tfPersonID.getText().trim());
-            appendOutput("\n--- Retrieving results for StudentID: " + studentID + " ---");
-            studentService.getStudentResults(studentID);
-            appendOutput("Results operation completed. Check console for details.");
-
-        } catch (NumberFormatException e) {
-            appendOutput("✗ Invalid StudentID format!");
-        }
-    }
-
-    /**
-     * CALCULATE GPA operation handler
-     */
-    private void handleCalculateGPA() {
-        try {
-            int studentID = Integer.parseInt(tfPersonID.getText().trim());
-            double gpa = studentService.calculateGPA(studentID);
-            appendOutput("✓ GPA for StudentID " + studentID + ": " + gpa);
-
-        } catch (NumberFormatException e) {
-            appendOutput("✗ Invalid StudentID format!");
-        }
+        String result = studentService.viewAllStudents();
+        appendOutput(result);
     }
 
     /**
@@ -366,9 +288,7 @@ public class MainUI extends JFrame {
         tfLastName.setText("");
         tfEmail.setText("");
         tfDOB.setText("");
-        tfAge.setText("");
         tfPersonID.setText("");
-        tfOfferingID.setText("");
     }
 
     /**

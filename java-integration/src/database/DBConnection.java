@@ -4,10 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Database Connection Handler
- * Manages JDBC connection
- */
+//Database Connection Handler that Manages JDBC connection
+
 public class DBConnection {
 
     // Database credentials
@@ -17,10 +15,7 @@ public class DBConnection {
 
     private static Connection connection = null;
 
-    /**
-     * Get database connection
-     * Creates new connection if not exists
-     */
+    // Get database connection, Creates new connection if not exists
     public static Connection getConnection() throws SQLException {
         try {
 
@@ -37,9 +32,7 @@ public class DBConnection {
         }
     }
 
-    /*
-     * Close database connection
-     */
+    // closes the db connection
     public static void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
