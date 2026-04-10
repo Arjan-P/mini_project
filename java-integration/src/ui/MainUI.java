@@ -41,7 +41,7 @@ public class MainUI extends JFrame {
 
         // Top panel - Input fields (fixed height)
         JPanel inputPanel = createInputPanel();
-        inputPanel.setPreferredSize(new Dimension(0, 120));
+        inputPanel.setPreferredSize(new Dimension(0, 180));
         mainPanel.add(inputPanel, BorderLayout.NORTH);
 
         // Center panel - Output area (takes most space)
@@ -50,7 +50,7 @@ public class MainUI extends JFrame {
 
         // Bottom panel - Buttons (single row)
         JPanel buttonPanel = createButtonPanel();
-        buttonPanel.setPreferredSize(new Dimension(0, 70));
+        buttonPanel.setPreferredSize(new Dimension(0, 100));
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
@@ -62,52 +62,83 @@ public class MainUI extends JFrame {
      */
     private JPanel createInputPanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 15));
+        GridBagLayout gbl = new GridBagLayout();
+        panel.setLayout(gbl);
         panel.setBackground(Color.WHITE);
         TitledBorder border = BorderFactory.createTitledBorder("Input Fields");
-        border.setTitleFont(new Font("Arial", Font.BOLD, 16));
-        panel.setBorder(border);
+        border.setTitleFont(new Font("Arial", Font.BOLD, 20));
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                border,
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)));
 
-        // Labels and TextFields
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // First Name
         JLabel lbl1 = new JLabel("First Name:");
-        lbl1.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl1);
+        lbl1.setFont(new Font("Arial", Font.BOLD, 25));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
+        panel.add(lbl1, gbc);
         tfFirstName = new JTextField(20);
-        tfFirstName.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfFirstName.setPreferredSize(new Dimension(220, 35));
-        panel.add(tfFirstName);
+        tfFirstName.setFont(new Font("Arial", Font.PLAIN, 25));
+        gbc.gridx = 1;
+        gbc.weightx = 0.5;
+        panel.add(tfFirstName, gbc);
 
+        // Last Name
         JLabel lbl2 = new JLabel("Last Name:");
-        lbl2.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl2);
+        lbl2.setFont(new Font("Arial", Font.BOLD, 25));
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
+        panel.add(lbl2, gbc);
         tfLastName = new JTextField(20);
-        tfLastName.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfLastName.setPreferredSize(new Dimension(220, 35));
-        panel.add(tfLastName);
+        tfLastName.setFont(new Font("Arial", Font.PLAIN, 25));
+        gbc.gridx = 3;
+        gbc.weightx = 0.5;
+        panel.add(tfLastName, gbc);
 
+        // Email
         JLabel lbl3 = new JLabel("Email:");
-        lbl3.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl3);
-        tfEmail = new JTextField(28);
-        tfEmail.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfEmail.setPreferredSize(new Dimension(300, 35));
-        panel.add(tfEmail);
+        lbl3.setFont(new Font("Arial", Font.BOLD, 25));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0;
+        panel.add(lbl3, gbc);
+        tfEmail = new JTextField(25);
+        tfEmail.setFont(new Font("Arial", Font.PLAIN, 25));
+        gbc.gridx = 1;
+        gbc.weightx = 0.5;
+        panel.add(tfEmail, gbc);
 
+        // DOB
         JLabel lbl4 = new JLabel("DOB (YYYY-MM-DD):");
-        lbl4.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl4);
-        tfDOB = new JTextField(18);
-        tfDOB.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfDOB.setPreferredSize(new Dimension(200, 35));
-        panel.add(tfDOB);
+        lbl4.setFont(new Font("Arial", Font.BOLD, 25));
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.weightx = 0;
+        panel.add(lbl4, gbc);
+        tfDOB = new JTextField(15);
+        tfDOB.setFont(new Font("Arial", Font.PLAIN, 25));
+        gbc.gridx = 3;
+        gbc.weightx = 0.5;
+        panel.add(tfDOB, gbc);
 
+        // PersonID
         JLabel lbl5 = new JLabel("PersonID:");
-        lbl5.setFont(new Font("Arial", Font.PLAIN, 16));
-        panel.add(lbl5);
-        tfPersonID = new JTextField(12);
-        tfPersonID.setFont(new Font("Arial", Font.PLAIN, 16));
-        tfPersonID.setPreferredSize(new Dimension(140, 35));
-        panel.add(tfPersonID);
+        lbl5.setFont(new Font("Arial", Font.BOLD, 25));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0;
+        panel.add(lbl5, gbc);
+        tfPersonID = new JTextField(10);
+        tfPersonID.setFont(new Font("Arial", Font.PLAIN, 25));
+        gbc.gridx = 1;
+        gbc.weightx = 0.5;
+        panel.add(tfPersonID, gbc);
 
         return panel;
     }
@@ -117,10 +148,12 @@ public class MainUI extends JFrame {
      */
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 8, 5));
+        panel.setLayout(new GridLayout(1, 5, 15, 0));
         TitledBorder border = BorderFactory.createTitledBorder("Operations");
-        border.setTitleFont(new Font("Arial", Font.BOLD, 16));
-        panel.setBorder(border);
+        border.setTitleFont(new Font("Arial", Font.BOLD, 18));
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         panel.setBackground(Color.WHITE);
 
         // INSERT Button
@@ -158,13 +191,15 @@ public class MainUI extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         TitledBorder border = BorderFactory.createTitledBorder("Output");
-        border.setTitleFont(new Font("Arial", Font.BOLD, 16));
-        panel.setBorder(border);
+        border.setTitleFont(new Font("Arial", Font.BOLD, 18));
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         panel.setBackground(Color.WHITE);
 
         taOutput = new JTextArea();
         taOutput.setEditable(false);
-        taOutput.setFont(new Font("Monospaced", Font.PLAIN, 18));
+        taOutput.setFont(new Font("Monospaced", Font.PLAIN, 30));
         taOutput.setBackground(new Color(30, 30, 30));
         taOutput.setForeground(new Color(0, 255, 0));
         taOutput.setMargin(new Insets(15, 15, 15, 15));
@@ -185,9 +220,9 @@ public class MainUI extends JFrame {
         JButton button = new JButton(label);
         button.setBackground(color);
         button.setForeground(Color.WHITE);
-        button.setFont(new Font("Arial", Font.BOLD, 15));
+        button.setFont(new Font("Arial", Font.BOLD, 20));
         button.setFocusPainted(false);
-        button.setPreferredSize(new Dimension(130, 50));
+        button.setPreferredSize(new Dimension(160, 80));
         return button;
     }
 
