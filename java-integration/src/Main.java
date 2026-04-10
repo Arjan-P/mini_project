@@ -1,3 +1,4 @@
+import ui.LoginUI;
 import ui.MainUI;
 
 //Main Entry Point that Launches the Academic Management System GUI
@@ -8,8 +9,15 @@ public class Main {
             // Launch GUI in Event Dispatch Thread
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    new MainUI();
-                    System.out.println("Application started successfully!");
+                    // Show login page first
+                    new LoginUI(new Runnable() {
+                        @Override
+                        public void run() {
+                            // After successful login, launch main UI
+                            new MainUI();
+                            System.out.println("Application started successfully!");
+                        }
+                    });
                 }
             });
         } catch (Exception e) {
