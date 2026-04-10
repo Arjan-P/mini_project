@@ -200,8 +200,7 @@ public class StudentService extends BaseService implements StudentInterface {
         return result.toString();
     }
 
-    // COMPILE-TIME POLYMORPHISM: Overloaded Methods (same name, different
-    // parameters)
+    // Overloaded Methods (same name, different parameters)
     public int insertStudent(String firstName, String lastName, String email) {
         return insertStudent(firstName, lastName, email, "2000-01-01");
     }
