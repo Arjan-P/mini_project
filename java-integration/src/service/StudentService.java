@@ -2,6 +2,7 @@ package service;
 
 import database.DBConnection;
 import java.sql.*;
+import java.time.LocalDate;
 
 /*
  Student Service Implementation
@@ -198,6 +199,17 @@ public class StudentService extends BaseService implements StudentInterface {
         }
 
         return result.toString();
+    }
+
+    // COMPILE-TIME POLYMORPHISM: Overloaded Methods (same name, different
+    // parameters)
+    public int insertStudent(String firstName, String lastName, String email) {
+        return insertStudent(firstName, lastName, email, "2000-01-01");
+    }
+
+    public int insertStudent(String firstName, String lastName) {
+        String defaultEmail = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@student.com";
+        return insertStudent(firstName, lastName, defaultEmail);
     }
 
 }

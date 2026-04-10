@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 // Base Service Class with Protected Methods
 // Protected methods can be accessed by subclasses and same package
-public class BaseService {
+class BaseService {
 
     // Protected field - accessible by subclasses
     protected Connection connection;
