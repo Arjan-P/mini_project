@@ -1,26 +1,47 @@
-DROP TABLE IF EXISTS student_course_unf;
-
-CREATE TABLE student_course_unf (
-    StudentID INT PRIMARY KEY,
+CREATE TABLE university_unf (
+    StudentID INT,
     StudentName VARCHAR(100),
-    CourseName VARCHAR(200),
-    FacultyName VARCHAR(100),
-    Marks VARCHAR(100)
+    Email VARCHAR(100),
+
+    ProgramID INT,
+    ProgramName VARCHAR(100),
+    Level VARCHAR(50),
+    DurationYears INT,
+
+    DepartmentID INT,
+    DepartmentName VARCHAR(100),
+
+    CourseID VARCHAR(200),
+    CourseTitle VARCHAR(200),
+    Credits VARCHAR(50),
+
+    OfferingID VARCHAR(200),
+    SemesterName VARCHAR(100),
+    Section VARCHAR(10),
+
+    FacultyID VARCHAR(200),
+    FacultyName VARCHAR(200),
+
+    AssessmentID VARCHAR(200),
+    AssessmentTitle VARCHAR(200),
+
+    MarksObtained VARCHAR(200)
 );
 
-INSERT INTO student_course_unf VALUES
-(101, 'Alice Johnson', 'Database Systems, Web Development', 'Dr. Smith, Dr. Brown', '85, 92'),
-(102, 'Bob Wilson', 'Data Structures, Algorithms', 'Dr. Johnson, Dr. Lee', '78, 88'),
-(103, 'Carol Davis', 'Database Systems, Algorithms, Web Development', 'Dr. Smith, Dr. Lee, Dr. Brown', '90, 92, 88'),
-(104, 'David Miller', 'Web Development', 'Dr. Brown', '95'),
-(105, 'Eve Martinez', 'Data Structures, Database Systems', 'Dr. Johnson, Dr. Smith', '82, 86');
+INSERT INTO university_unf VALUES
+(101, 'Alice Johnson', 'alice@mail.com',
+ 1, 'BTech CSE', 'UG', 4,
+ 10, 'Computer Science',
+ '201,202', 'DBMS, OS', '4,3',
+ '301,302', 'Sem1', 'A',
+ '401,402', 'Dr. Smith, Dr. Lee',
+ '501,502', 'Midterm, Quiz',
+ '85,18');
 
-SELECT * FROM student_course_unf;
-
-/*
-UNNORMALIZED FORM (UNF)
-- Shows data with repeating groups and redundancy
-- StudentID, StudentName, CourseName, FacultyName, Marks stored as comma-separated values
-- Demonstrates data anomalies and redundancy issues
-- Multiple courses and marks in a single cell (not atomic)
+ /*
+UNF
+- Entire system flattened into one table
+- Multiple values stored in single attributes (CourseID, FacultyID, Marks, etc.)
+- No atomicity, heavy redundancy
+- Represents raw, unstructured data before normalization
 */

@@ -1,32 +1,60 @@
-DROP TABLE IF EXISTS student_course_1nf;
-
-CREATE TABLE student_course_1nf (
+CREATE TABLE university_1nf (
     StudentID INT,
     StudentName VARCHAR(100),
-    CourseName VARCHAR(100),
+    Email VARCHAR(100),
+
+    ProgramID INT,
+    ProgramName VARCHAR(100),
+    Level VARCHAR(50),
+    DurationYears INT,
+
+    DepartmentID INT,
+    DepartmentName VARCHAR(100),
+
+    CourseID INT,
+    CourseTitle VARCHAR(100),
+    Credits INT,
+
+    OfferingID INT,
+    SemesterName VARCHAR(100),
+    Section VARCHAR(10),
+
+    FacultyID INT,
     FacultyName VARCHAR(100),
-    Marks INT,
-    PRIMARY KEY (StudentID, CourseName)
+
+    AssessmentID INT,
+    AssessmentTitle VARCHAR(100),
+
+    MarksObtained INT,
+
+    PRIMARY KEY (StudentID, CourseID, OfferingID, AssessmentID)
 );
 
-INSERT INTO student_course_1nf (StudentID, StudentName, CourseName, FacultyName, Marks) VALUES
-(101, 'Alice Johnson', 'Database Systems', 'Dr. Smith', 85),
-(101, 'Alice Johnson', 'Web Development', 'Dr. Brown', 92),
-(102, 'Bob Wilson', 'Data Structures', 'Dr. Johnson', 78),
-(102, 'Bob Wilson', 'Algorithms', 'Dr. Lee', 88),
-(103, 'Carol Davis', 'Database Systems', 'Dr. Smith', 90),
-(103, 'Carol Davis', 'Algorithms', 'Dr. Lee', 92),
-(103, 'Carol Davis', 'Web Development', 'Dr. Brown', 88),
-(104, 'David Miller', 'Web Development', 'Dr. Brown', 95),
-(105, 'Eve Martinez', 'Data Structures', 'Dr. Johnson', 82),
-(105, 'Eve Martinez', 'Database Systems', 'Dr. Smith', 86);
+INSERT INTO university_1nf VALUES
+(101, 'Alice Johnson', 'alice@mail.com',
+ 1, 'BTech CSE', 'UG', 4,
+ 10, 'Computer Science',
+ 201, 'DBMS', 4,
+ 301, 'Sem1', 'A',
+ 401, 'Dr. Smith',
+ 501, 'Midterm',
+ 85),
 
-SELECT * FROM student_course_1nf;
+(101, 'Alice Johnson', 'alice@mail.com',
+ 1, 'BTech CSE', 'UG', 4,
+ 10, 'Computer Science',
+ 202, 'OS', 3,
+ 302, 'Sem1', 'A',
+ 402, 'Dr. Lee',
+ 502, 'Quiz',
+ 18);
 
-/*
-FIRST NORMAL FORM (1NF)
-- Atomic values only - each cell contains a single value
-- Remove repeating groups by creating separate rows
-- Primary key: (StudentID, CourseName)
-- Still contains partial dependencies (StudentName depends only on StudentID, not on CourseName)
+
+ /*
+1NF
+- All attributes are atomic (no comma-separated values)
+- Repeating groups removed into rows
+- Still massive redundancy:
+  Student, Program, Department repeated
+- Partial + transitive dependencies exist
 */

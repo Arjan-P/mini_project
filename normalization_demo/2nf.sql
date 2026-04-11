@@ -1,62 +1,91 @@
 CREATE TABLE student_2nf (
     StudentID INT PRIMARY KEY,
-    StudentName VARCHAR(100)
+    StudentName VARCHAR(100),
+    Email VARCHAR(100),
+    ProgramID INT
 );
 
+CREATE TABLE department_2nf (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(100)
+);
+
+CREATE TABLE program_2nf (
+    ProgramID INT PRIMARY KEY,
+    ProgramName VARCHAR(100),
+    Level VARCHAR(50),
+    DurationYears INT,
+    DepartmentID INT,
+    FOREIGN KEY (DepartmentID) REFERENCES department_2nf(DepartmentID)
+);
+
+
 CREATE TABLE course_2nf (
-    CourseName VARCHAR(100) PRIMARY KEY,
+    CourseID INT PRIMARY KEY,
+    CourseTitle VARCHAR(100),
+    Credits INT,
+    ProgramID INT,
+    DepartmentID INT,
+    FOREIGN KEY (ProgramID) REFERENCES program_2nf(ProgramID)
+);
+
+
+CREATE TABLE offering_2nf (
+    OfferingID INT PRIMARY KEY,
+    CourseID INT,
+    SemesterName VARCHAR(100),
+    Section VARCHAR(10),
+    FOREIGN KEY (CourseID) REFERENCES course_2nf(CourseID)
+);
+
+CREATE TABLE faculty_2nf (
+    FacultyID INT PRIMARY KEY,
     FacultyName VARCHAR(100)
+);
+
+CREATE TABLE assessment_2nf (
+    AssessmentID INT PRIMARY KEY,
+    AssessmentTitle VARCHAR(100),
+    OfferingID INT,
+    FOREIGN KEY (OfferingID) REFERENCES offering_2nf(OfferingID)
 );
 
 CREATE TABLE enrollment_2nf (
     StudentID INT,
-    CourseName VARCHAR(100),
-    Marks INT,
-    PRIMARY KEY (StudentID, CourseName),
+    OfferingID INT,
+    AssessmentID INT,
+    MarksObtained INT,
+    PRIMARY KEY (StudentID, OfferingID, AssessmentID),
     FOREIGN KEY (StudentID) REFERENCES student_2nf(StudentID),
-    FOREIGN KEY (CourseName) REFERENCES course_2nf(CourseName)
+    FOREIGN KEY (OfferingID) REFERENCES offering_2nf(OfferingID),
+    FOREIGN KEY (AssessmentID) REFERENCES assessment_2nf(AssessmentID)
 );
 
+INSERT INTO department_2nf VALUES
+(10, 'Computer Science');
+
+INSERT INTO program_2nf VALUES
+(1, 'BTech CSE', 'UG', 4, 10);
+
 INSERT INTO student_2nf VALUES
-(101, 'Alice Johnson'),
-(102, 'Bob Wilson'),
-(103, 'Carol Davis'),
-(104, 'David Miller'),
-(105, 'Eve Martinez');
+(101, 'Alice Johnson', 'alice@mail.com', 1);
 
 INSERT INTO course_2nf VALUES
-('Database Systems', 'Dr. Smith'),
-('Web Development', 'Dr. Brown'),
-('Data Structures', 'Dr. Johnson'),
-('Algorithms', 'Dr. Lee');
+(201, 'DBMS', 4, 1, 10),
+(202, 'OS', 3, 1, 10);
 
-INSERT INTO enrollment_2nf (StudentID, CourseName, Marks) VALUES
-(101, 'Database Systems', 85),
-(101, 'Web Development', 92),
-(102, 'Data Structures', 78),
-(102, 'Algorithms', 88),
-(103, 'Database Systems', 90),
-(103, 'Algorithms', 92),
-(103, 'Web Development', 88),
-(104, 'Web Development', 95),
-(105, 'Data Structures', 82),
-(105, 'Database Systems', 86);
+INSERT INTO offering_2nf VALUES
+(301, 201, 'Sem1', 'A'),
+(302, 202, 'Sem1', 'A');
 
-SELECT 'Student Table' AS TableName;
-SELECT * FROM student_2nf;
-SELECT 'Course Table' AS TableName;
-SELECT * FROM course_2nf;
-SELECT 'Enrollment Table' AS TableName;
-SELECT * FROM enrollment_2nf;
+INSERT INTO faculty_2nf VALUES
+(401, 'Dr. Smith'),
+(402, 'Dr. Lee');
 
-/*
-SECOND NORMAL FORM (2NF)
-- Remove partial dependencies
-- Non-key attributes must depend on the ENTIRE primary key, not just part of it
-- Separated into 3 tables: Student, Course, Enrollment
-- StudentName now only in Student table (depends on StudentID)
-- FacultyName now only in Course table (depends on CourseName)
-- Enrollment table references both via foreign keys
-*/
+INSERT INTO assessment_2nf VALUES
+(501, 'Midterm', 301),
+(502, 'Quiz', 302);
 
-/*test*/
+INSERT INTO enrollment_2nf VALUES
+(101, 301, 501, 85),
+(101, 302, 502, 18);
