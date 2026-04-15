@@ -1741,7 +1741,35 @@ END
 
 Enrolls a student in a course offering. Uses INSERT IGNORE to prevent duplicate enrollments. Sets enrollment date to the current date and marks the enrollment status as 'Active'. Triggers are automatically enforced to prevent over-enrollment and duplicate records.
 
-[Insert Procedure Output Screenshot Here]
+```
+--------------
+CALL enroll_student(5, 7)
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+SELECT * FROM ENROLLMENT
+--------------
+
++-----------+------------+----------------+--------+
+| StudentID | OfferingID | EnrollmentDate | Status |
++-----------+------------+----------------+--------+
+|         1 |          1 | 2024-01-15     | Active |
+|         1 |          2 | 2024-01-15     | Active |
+|         1 |          4 | 2024-01-15     | Active |
+|         1 |         12 | 2024-08-15     | Active |
+|         2 |          7 | 2024-01-15     | Active |
+|         2 |          8 | 2024-01-15     | Active |
+|         2 |         14 | 2024-08-15     | Active |
+|         3 |          3 | 2024-01-15     | Active |
+|         3 |          5 | 2024-01-15     | Active |
+|         4 |          9 | 2024-01-15     | Active |
+|         5 |          5 | 2026-04-14     | Active |
+|         5 |          7 | 2026-04-15     | Active |
+|         5 |         10 | 2024-01-15     | Active |
++-----------+------------+----------------+--------+
+```
 
 ---
 
@@ -1806,7 +1834,52 @@ END
 
 Enforces course capacity constraint. Before inserting an enrollment record, checks if the current enrollment count has reached the maximum seat capacity. If the course is full, raises an error and prevents the enrollment.
 
-[Insert Trigger Output Screenshot Here]
+```
+--------------
+SELECT * FROM COURSE_OFFERING
+--------------
+
++------------+----------+------------+---------+----------+
+| OfferingID | CourseID | SemesterID | Section | MaxSeats |
++------------+----------+------------+---------+----------+
+|          1 |        1 |          1 | A       |       50 |
+|          2 |        1 |          1 | B       |       50 |
+|          3 |        2 |          1 | A       |       40 |
+|          4 |        3 |          1 | A       |       60 |
+|          5 |        4 |          1 | A       |       45 |
+|          6 |        5 |          1 | A       |       40 |
+|          7 |        6 |          1 | A       |       45 |
+|          8 |        7 |          1 | A       |       50 |
+|          9 |        8 |          1 | A       |       50 |
+|         10 |        9 |          1 | A       |       40 |
+|         11 |       10 |          1 | A       |       35 |
+|         12 |        1 |          3 | A       |       50 |
+|         13 |        2 |          3 | A       |       40 |
+|         14 |        4 |          3 | A       |       45 |
+|         15 |        8 |          3 | A       |       50 |
+|         16 |        2 |          3 | B       |        2 |
++------------+----------+------------+---------+----------+
+16 rows in set (0.00 sec)
+
+--------------
+CALL enroll_student(4, 16)
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+CALL enroll_student(3, 16)
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+CALL enroll_student(5, 16)
+--------------
+
+ERROR 1644 (45000): Course full
+
+```
 
 ---
 
@@ -1829,7 +1902,36 @@ END
 
 Prevents duplicate enrollments. Before inserting an enrollment record, verifies that the student is not already enrolled in the same course offering. If a duplicate enrollment is detected, raises an error and rejects the operation.
 
-[Insert Trigger Output Screenshot Here]
+```
+--------------
+SELECT * FROM ENROLLMENT
+--------------
+
++-----------+------------+----------------+--------+
+| StudentID | OfferingID | EnrollmentDate | Status |
++-----------+------------+----------------+--------+
+|         1 |          1 | 2024-01-15     | Active |
+|         1 |          2 | 2024-01-15     | Active |
+|         1 |          4 | 2024-01-15     | Active |
+|         1 |         12 | 2024-08-15     | Active |
+|         2 |          7 | 2024-01-15     | Active |
+|         2 |          8 | 2024-01-15     | Active |
+|         2 |         14 | 2024-08-15     | Active |
+|         3 |          3 | 2024-01-15     | Active |
+|         3 |          5 | 2024-01-15     | Active |
+|         4 |          9 | 2024-01-15     | Active |
+|         5 |          5 | 2026-04-14     | Active |
+|         5 |         10 | 2024-01-15     | Active |
++-----------+------------+----------------+--------+
+12 rows in set (0.01 sec)
+
+mysql> CALL enroll_student(5, 5);
+--------------
+CALL enroll_student(5, 5)
+--------------
+
+ERROR 1644 (45000): Student already enrolled in this course
+```
 
 ---
 
